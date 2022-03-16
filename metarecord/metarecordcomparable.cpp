@@ -109,8 +109,14 @@ bool MetaRecordComparable::compare(const QVariantMap& vars, int compareType) con
     {
       QVariant value = this->property(property.name());
       QVariant comparedTo = vars[propertyName];
+      QMetaType::Type propertyType;
 
-      if (!strategy(value, comparedTo, static_cast<QMetaType::Type>(property.typeId())))
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+      propertyType = static_cast<QMetaType::Type>(property.type());
+#else
+      propertyType = static_cast<QMetaType::Type>(property.typeId());
+#endif
+      if (!strategy(value, comparedTo, propertyType))
         return false;
     }
   }
