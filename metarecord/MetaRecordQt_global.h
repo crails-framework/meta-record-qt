@@ -1,0 +1,12 @@
+#ifndef METARECORDQT_GLOBAL_H
+#define METARECORDQT_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(METARECORDQT_LIBRARY)
+#  define METARECORDQT_EXPORT Q_DECL_EXPORT
+#else
+#  define METARECORDQT_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // METARECORDQT_GLOBAL_H
