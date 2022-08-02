@@ -15,6 +15,7 @@ class METARECORDQT_EXPORT MetaRecordable : public QObject
 public:
   explicit MetaRecordable(QObject *parent = nullptr);
 
+  virtual const QByteArray& getUuid() const = 0;
   virtual QByteArray getType() const { return metaObject()->className(); }
   virtual void       fromVariantMap(const QVariantMap&);
   void               fromJson(const QByteArray&);

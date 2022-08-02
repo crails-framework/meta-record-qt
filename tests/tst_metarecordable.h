@@ -20,9 +20,12 @@ public:
     boolean = true;
   }
 
+  const QByteArray& getUuid() const override { return uuid; }
+
   int number;
   QString string;
   bool boolean;
+  QByteArray uuid;
 
 signals:
   void numberChanged();
