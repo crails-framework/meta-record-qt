@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(USE_QT_5)
   find_package(QT NAMES Qt5 COMPONENTS Core REQUIRED)
 else()
-  find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+  find_package(QT NAMES Qt6 COMPONENTS Core REQUIRED)
 endif()
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
