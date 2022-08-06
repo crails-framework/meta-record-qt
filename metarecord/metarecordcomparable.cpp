@@ -80,7 +80,7 @@ static bool compareLikeness(const QVariant& a, const QVariant& b, const QMetaTyp
 
 static bool compareIdentical(const QVariant& a, const QVariant& b, const QMetaType::Type)
 {
-  return a == b;
+  return a.toString() == b.toString();
 }
 
 static CompareStrategy* getCompareStrategy(MetaRecordComparable::ComparaisonType type)

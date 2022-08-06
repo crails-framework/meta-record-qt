@@ -12,18 +12,21 @@ class MetaRecordComparableSample : public MetaRecordComparable
   Q_PROPERTY(int number MEMBER number CONSTANT)
   Q_PROPERTY(QString string MEMBER string CONSTANT)
   Q_PROPERTY(bool boolean MEMBER boolean CONSTANT)
+  Q_PROPERTY(QByteArray byteArray MEMBER byteArray CONSTANT)
 public:
   MetaRecordComparableSample(QObject* parent = nullptr) : MetaRecordComparable(parent)
   {
     number = 0;
     string = "toto";
     boolean = true;
+    byteArray = "tintin";
   }
 
   const QByteArray& getUuid() const override { return uuid; }
 
   int number;
   QString string;
+  QByteArray byteArray;
   bool boolean;
   QByteArray uuid;
 };
@@ -77,12 +80,20 @@ private slots:
     }));
   }
 
-  void identiclCompareShouldReturnFalseWithSimilarStrings()
+  void identicalCompareShouldReturnFalseWithSimilarStrings()
   {
     MetaRecordComparableSample model;
     model.string = "chapopointu";
     QVERIFY(!model.compare({
       {"string", "popo"}
+    }, MetaRecordComparable::Identical));
+  }
+
+  void identicalCompareShouldReturnTrueWithDifferentTypes()
+  {
+    MetaRecordComparableSample model;
+    QVERIFY(model.compare({
+      {"byteArray", "tintin"}
     }, MetaRecordComparable::Identical));
   }
 };
