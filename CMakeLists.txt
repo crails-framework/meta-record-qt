@@ -18,26 +18,33 @@ else()
   find_package(QT NAMES Qt6 COMPONENTS Core REQUIRED)
 endif()
 
-if (WITH_TABLE_MODELS)
+set(source_files
+  metarecord/metarecordable.cpp
+  metarecord/metarecordcomparable.cpp
+  metarecord/metarecordnotifiable.cpp
+)
+set(header_files
+  metarecord/MetaRecordQt_global.h
+  metarecord/metarecordable.h
+  metarecord/metarecordcomparable.h
+  metarecord/metarecordvalidatable.h
+  metarecord/metarecordnotifiable.h
+  metarecord/hasOne.h
+  metarecord/vector.h
+)
+
+if (WITH_TABLE_MODEL)
   find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Qml REQUIRED)
   set(TABLE_MODEL_LIBS Qt${QT_VERSION_MAJOR}::Qml QI18n)
-  set(TABLE_MODEL_SRC
-    metarecord/tablemodel.h
-    metarecord/tablemodel.cpp)
+  set(source_files ${source_files} metarecord/tablemodel.cpp)
+  set(header_files ${header_files} metarecord/tablemodel.h)
 else()
   find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 endif()
 
 add_library(MetaRecordQt SHARED
-  metarecord/MetaRecordQt_global.h
-  metarecord/metarecordable.cpp
-  metarecord/metarecordable.h
-  metarecord/metarecordcomparable.cpp
-  metarecord/metarecordcomparable.h
-  metarecord/metarecordnotifiable.cpp
-  metarecord/metarecordnotifiable.h
-  metarecord/hasOne.h
-  ${TABLE_MODEL_SRC}
+  ${source_files}
+  ${header_files}
 )
 
 target_link_libraries(MetaRecordQt PRIVATE Qt${QT_VERSION_MAJOR}::Core ${TABLE_MODEL_LIBS})
@@ -47,3 +54,6 @@ target_compile_definitions(MetaRecordQt PRIVATE METARECORDQT_LIBRARY)
 if(BUILD_TESTS)
   add_subdirectory(tests)
 endif()
+
+install(FILES ${header_files} DESTINATION include/metarecord-qt)
+install(TARGETS MetaRecordQt LIBRARY DESTINATION lib)
