@@ -23,6 +23,8 @@ public:
   void               fromValue(const QJsonValue& value) { fromVariantMap(value.toObject().toVariantMap()); }
   Q_INVOKABLE void   fromValue(const QVariant& value)   { fromVariantMap(value.toMap()); }
 
+  Q_INVOKABLE virtual bool copy(const MetaRecordable*, int options = 0);
+
   virtual QVariantMap  toVariantMap(int flag = 0) const;
   Q_INVOKABLE QVariant toVariant(int flag = 0) const { return toVariantMap(flag); }
   QJsonObject          toJson(int flag = 0) const { return QJsonObject::fromVariantMap(toVariantMap(flag)); }

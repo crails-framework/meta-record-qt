@@ -66,6 +66,18 @@ QVariantMap MetaRecordable::toVariantMap(int) const
   return map;
 }
 
+bool MetaRecordable::copy(const MetaRecordable* source, int)
+{
+  if (source && metaObject()->className() == source->metaObject()->className())
+  {
+    fromVariantMap(source->toVariantMap());
+    return true;
+  }
+  else
+    qDebug() << "MetaRecordable: cannot copy" << source << "into" << this;
+  return false;
+}
+
 QString MetaRecordable::inspect() const
 {
   return QJsonDocument(toJson()).toJson(QJsonDocument::Indented);
