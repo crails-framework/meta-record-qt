@@ -25,6 +25,8 @@ add_library(MetaRecordQt SHARED
   metarecord/metarecordable.h
   metarecord/metarecordcomparable.cpp
   metarecord/metarecordcomparable.h
+  metarecord/metarecordnotifiable.cpp
+  metarecord/metarecordnotifiable.h
   metarecord/hasOne.h
 )
 
