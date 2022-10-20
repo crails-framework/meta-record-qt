@@ -1,9 +1,9 @@
 #ifndef  METARECORDNOTIFIABLE_H
 # define METARECORDNOTIFIABLE_H
 
-#include "metarecordcomparable.h"
+#include "metarecordvalidatable.h"
 
-class METARECORDQT_EXPORT MetaRecordNotifiable : public MetaRecordComparable
+class METARECORDQT_EXPORT MetaRecordNotifiable : public MetaRecordValidatable
 {
   Q_OBJECT
 public:

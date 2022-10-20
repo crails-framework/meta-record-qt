@@ -1,6 +1,6 @@
 #include "metarecordnotifiable.h"
 
-MetaRecordNotifiable::MetaRecordNotifiable(QObject* parent) : MetaRecordComparable(parent)
+MetaRecordNotifiable::MetaRecordNotifiable(QObject* parent) : MetaRecordValidatable(parent)
 {
 }
 
