@@ -11,7 +11,7 @@ MetaRecordTableModel::MetaRecordTableModel(QObject* parent) : QAbstractTableMode
 
 void MetaRecordTableModel::initializeRowHeaderColumn(const MetaRecordable& sample)
 {
-  QVector<QByteArray> rowHeaderCandidates({"code", "name", "uuid"});
+  QVector<QByteArray> rowHeaderCandidates({"code", "name", "uid"});
 
   for (const auto& candidate : rowHeaderCandidates)
   {

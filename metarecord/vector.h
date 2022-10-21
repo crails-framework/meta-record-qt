@@ -1,5 +1,5 @@
-#ifndef  APPLICATION_VECTOR_H
-# define APPLICATION_VECTOR_H
+#ifndef  METARECORD_VECTOR_H
+# define METARECORD_VECTOR_H
 
 # include <QVector>
 # include "metarecordable.h"

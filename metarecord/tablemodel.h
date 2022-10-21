@@ -57,7 +57,7 @@ public:
   explicit MetaRecordTableModel(QObject* parent = nullptr);
 
   void initializeRowHeaderColumn(const MetaRecordable& ref);
-  void initializeColumns(const MetaRecordable& ref, QStringList blacklist = QStringList() << "uuid");
+  void initializeColumns(const MetaRecordable& ref, QStringList blacklist = QStringList() << "uid");
   void appendRows(const QVector<MetaRecordable*>&, int index = -1);
   void replaceRows(const QVector<MetaRecordable*>&);
   void removeRows(const QStringList& uids);
