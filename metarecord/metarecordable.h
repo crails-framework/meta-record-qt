@@ -17,6 +17,7 @@ public:
 
   virtual const QByteArray& getUuid() const = 0;
   virtual QByteArray getType() const { return metaObject()->className(); }
+  bool               isPersistent() const { return getUuid().length() > 0; }
   virtual void       fromVariantMap(const QVariantMap&);
   void               fromJson(const QByteArray&);
   void               fromJson(const QJsonObject& value) { fromVariantMap(value.toVariantMap()); }
