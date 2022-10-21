@@ -15,9 +15,10 @@ class METARECORDQT_EXPORT MetaRecordable : public QObject
 public:
   explicit MetaRecordable(QObject *parent = nullptr);
 
-  virtual const QByteArray& getUuid() const = 0;
+  const QByteArray&  getUid() const { return uid; };
+  void               setUid(const QByteArray& val) { uid = val; emit uidChanged(); }
   virtual QByteArray getType() const { return metaObject()->className(); }
-  bool               isPersistent() const { return getUuid().length() > 0; }
+  bool               isPersistent() const { return !uid.isEmpty() && !uid.startsWith("NULL"); }
   virtual void       fromVariantMap(const QVariantMap&);
   void               fromJson(const QByteArray&);
   void               fromJson(const QJsonObject& value) { fromVariantMap(value.toVariantMap()); }
@@ -46,9 +47,14 @@ public:
     return model;
   }
 
+signals:
+  void uidChanged();
+
 protected:
   virtual bool usePolymorphism() const { return false; }
   virtual const QStringList& virtualPropertyList() const;
+
+  QByteArray uid;
 };
 
 #define METARECORD_VIRTUAL_PROPERTIES(parent, list) \

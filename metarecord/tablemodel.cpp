@@ -143,7 +143,7 @@ int MetaRecordTableModel::indexOf(QByteArray uid)
 {
   for (int i = 0 ; i < list.size() ; ++i)
   {
-    if (list[i]->getUuid() == uid)
+    if (list[i]->getUid() == uid)
       return i;
   }
   return -1;

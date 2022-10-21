@@ -13,7 +13,7 @@ void setHasOneRelationship(QObject* self, QByteArray& uid, TYPE*& value, const T
   if (newValue)
   {
     value = MetaRecordable::factory<TYPE>(newValue->toVariantMap(), self);
-    uid   = value->getUuid();
+    uid   = value->getUid();
   }
   else
   {

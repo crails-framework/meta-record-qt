@@ -22,13 +22,10 @@ public:
     byteArray = "tintin";
   }
 
-  const QByteArray& getUuid() const override { return uuid; }
-
   int number;
   QString string;
   QByteArray byteArray;
   bool boolean;
-  QByteArray uuid;
 };
 
 class MetaRecordComparableTest : public QObject
