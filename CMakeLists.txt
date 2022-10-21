@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 project(MetaRecordQt LANGUAGES CXX)
 
 option(BUILD_TESTS "builds tests" ON)
-option(WITH_TABLE_MODEL "uses table model (will pull QtQml and QI18n)" ON)
+option(WITH_TABLE_MODEL "with MetaRecordTableModel (needs QtQml and QI18n)" ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)

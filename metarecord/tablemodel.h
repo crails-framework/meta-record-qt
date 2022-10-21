@@ -8,7 +8,7 @@
 
 class QJSEngine;
 
-class MetaRecordTableModel : public QAbstractTableModel
+class METARECORDQT_EXPORT MetaRecordTableModel : public QAbstractTableModel
 {
   Q_OBJECT
 
