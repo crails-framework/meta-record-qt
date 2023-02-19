@@ -3,7 +3,7 @@
 
 # include <QObject>
 # include <QTest>
-# include "metarecord/metarecordable.h"
+# include "metarecord-qt/metarecordable.h"
 
 class MetaRecordableSample : public MetaRecordable
 {

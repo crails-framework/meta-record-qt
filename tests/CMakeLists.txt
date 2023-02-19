@@ -10,10 +10,10 @@ set(TEST_LINK_LIBRARIES
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Test)
 
-add_executable(metarecordable       tst_metarecordable.cpp ../metarecord/metarecordable.cpp)
+add_executable(metarecordable       tst_metarecordable.cpp ../metarecord-qt/metarecordable.cpp)
 add_test(NAME metarecordable COMMAND metarecordable)
 target_link_libraries(metarecordable PRIVATE ${TEST_LINK_LIBRARIES})
 
-add_executable(metarecordcomparable tst_metarecordcomparable.cpp ../metarecord/metarecordable.cpp ../metarecord/metarecordcomparable.cpp)
+add_executable(metarecordcomparable tst_metarecordcomparable.cpp ../metarecord-qt/metarecordable.cpp ../metarecord-qt/metarecordcomparable.cpp)
 add_test(NAME metarecordcomparable COMMAND metarecordcomparable)
 target_link_libraries(metarecordcomparable PRIVATE ${TEST_LINK_LIBRARIES})

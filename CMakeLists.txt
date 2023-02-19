@@ -19,25 +19,25 @@ else()
 endif()
 
 set(source_files
-  metarecord/metarecordable.cpp
-  metarecord/metarecordcomparable.cpp
-  metarecord/metarecordnotifiable.cpp
+  metarecord-qt/metarecordable.cpp
+  metarecord-qt/metarecordcomparable.cpp
+  metarecord-qt/metarecordnotifiable.cpp
 )
 set(header_files
-  metarecord/MetaRecordQt_global.h
-  metarecord/metarecordable.h
-  metarecord/metarecordcomparable.h
-  metarecord/metarecordvalidatable.h
-  metarecord/metarecordnotifiable.h
-  metarecord/hasOne.h
-  metarecord/vector.h
+  metarecord-qt/MetaRecordQt_global.h
+  metarecord-qt/metarecordable.h
+  metarecord-qt/metarecordcomparable.h
+  metarecord-qt/metarecordvalidatable.h
+  metarecord-qt/metarecordnotifiable.h
+  metarecord-qt/hasOne.h
+  metarecord-qt/vector.h
 )
 
 if (WITH_TABLE_MODEL)
   find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Qml REQUIRED)
   set(TABLE_MODEL_LIBS Qt${QT_VERSION_MAJOR}::Qml QI18n)
-  set(source_files ${source_files} metarecord/tablemodel.cpp)
-  set(header_files ${header_files} metarecord/tablemodel.h)
+  set(source_files ${source_files} metarecord-qt/tablemodel.cpp)
+  set(header_files ${header_files} metarecord-qt/tablemodel.h)
 else()
   find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 endif()

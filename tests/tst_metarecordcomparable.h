@@ -3,7 +3,7 @@
 
 # include <QObject>
 # include <QTest>
-# include "metarecord/metarecordcomparable.h"
+# include "metarecord-qt/metarecordcomparable.h"
 
 class MetaRecordComparableSample : public MetaRecordComparable
 {
