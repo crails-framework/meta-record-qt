@@ -19,6 +19,8 @@ public:
   void               setUid(const QByteArray& val) { uid = val; emit uidChanged(); }
   virtual QByteArray getType() const { return metaObject()->className(); }
   bool               isPersistent() const { return !uid.isEmpty() && !uid.startsWith("NULL"); }
+  bool               isSame(const MetaRecordable& other) const { return !uid.isEmpty() && uid == other.getUid(); }
+  bool               isSame(const MetaRecordable* other) const { return other && isSame(*other); }
   virtual void       fromVariantMap(const QVariantMap&);
   void               fromJson(const QByteArray&);
   void               fromJson(const QJsonObject& value) { fromVariantMap(value.toVariantMap()); }
@@ -31,6 +33,11 @@ public:
   Q_INVOKABLE QVariant toVariant(int flag = 0) const { return toVariantMap(flag); }
   QJsonObject          toJson(int flag = 0) const { return QJsonObject::fromVariantMap(toVariantMap(flag)); }
   Q_INVOKABLE QString  inspect() const;
+
+  static bool areSame(const MetaRecordable* a, const MetaRecordable* b)
+  {
+    return a && b && a->isSame(b);
+  }
 
   template<typename FINAL_TYPE>
   static const char* collectionName() { return FINAL_TYPE().metaObject()->className(); }
