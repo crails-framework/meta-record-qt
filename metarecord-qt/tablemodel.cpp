@@ -197,10 +197,14 @@ QVariant MetaRecordTableModel::tableData(const QModelIndex& index) const
     else
     {
       value = model->property(column.property.constData());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
       if (value.typeId() == QMetaType::Double)
+#else
+      if (static_cast<QMetaType::Type>(value.type()) == QMetaType::Double)
+#endif
       {
         unsigned int op = std::pow(10, column.decimals);
-	value = std::round(value.toDouble() * op) / op;
+        value = std::round(value.toDouble() * op) / op;
       }
     }
   }

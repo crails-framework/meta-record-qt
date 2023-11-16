@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(MetaRecordQt LANGUAGES CXX)
+project(MetaRecordQt
+  LANGUAGES CXX
+  VERSION 1.0.0)
 
 option(BUILD_TESTS "builds tests" ON)
 option(WITH_TABLE_MODEL "with MetaRecordTableModel (needs QtQml and QI18n)" ON)
@@ -12,11 +14,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(USE_QT_5)
-  find_package(QT NAMES Qt5 COMPONENTS Core REQUIRED)
-else()
-  find_package(QT NAMES Qt6 COMPONENTS Core REQUIRED)
-endif()
+find_package(PkgConfig)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+
+message("Using Qt${QT_VERSION_MAJOR}")
 
 set(source_files
   metarecord-qt/metarecordable.cpp
@@ -35,25 +36,29 @@ set(header_files
 
 if (WITH_TABLE_MODEL)
   find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Qml REQUIRED)
-  set(TABLE_MODEL_LIBS Qt${QT_VERSION_MAJOR}::Qml QI18n)
+  pkg_check_modules(QI18N REQUIRED Qt${QT_VERSION_MAJOR}I18n>=1.0.0)
+  set(TABLE_MODEL_LIBS Qt${QT_VERSION_MAJOR}::Qml ${QI18N_LIBRARIES})
   set(source_files ${source_files} metarecord-qt/tablemodel.cpp)
   set(header_files ${header_files} metarecord-qt/tablemodel.h)
 else()
   find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 endif()
 
-add_library(MetaRecordQt SHARED
+add_library(MetaRecordQt${QT_VERSION_MAJOR} SHARED
   ${source_files}
   ${header_files}
 )
 
-target_link_libraries(MetaRecordQt PRIVATE Qt${QT_VERSION_MAJOR}::Core ${TABLE_MODEL_LIBS})
+target_link_libraries(MetaRecordQt${QT_VERSION_MAJOR} PRIVATE Qt${QT_VERSION_MAJOR}::Core ${TABLE_MODEL_LIBS})
 
-target_compile_definitions(MetaRecordQt PRIVATE METARECORDQT_LIBRARY)
+target_compile_definitions(MetaRecordQt${QT_VERSION_MAJOR} PRIVATE METARECORDQT_LIBRARY)
 
 if(BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
+configure_file(meta-record-qt.pc.in meta-record-qt${QT_VERSION_MAJOR}.pc @ONLY)
+
 install(FILES ${header_files} DESTINATION include/metarecord-qt)
-install(TARGETS MetaRecordQt LIBRARY DESTINATION lib)
+install(TARGETS MetaRecordQt${QT_VERSION_MAJOR} LIBRARY DESTINATION lib)
+install(FILES ${CMAKE_BINARY_DIR}/meta-record-qt${QT_VERSION_MAJOR}.pc DESTINATION lib/pkgconfig)
