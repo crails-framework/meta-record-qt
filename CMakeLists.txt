@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(PkgConfig)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 
-message("Using Qt${QT_VERSION_MAJOR}")
+message("Building ${PROJECT_NAME} using Qt${QT_VERSION_MAJOR}")
 
 set(source_files
   metarecord-qt/metarecordable.cpp
@@ -35,8 +35,11 @@ set(header_files
 )
 
 if (WITH_TABLE_MODEL)
+  message("Building ${PROJECT_NAME} with MetaRecordTableModel")
   find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Qml REQUIRED)
-  pkg_check_modules(QI18N REQUIRED Qt${QT_VERSION_MAJOR}I18n>=1.0.0)
+  if (NOT DEFINED QI18N_LIBRARIES)
+    pkg_check_modules(QI18N REQUIRED Qt${QT_VERSION_MAJOR}I18n>=1.0.0)
+  endif()
   set(TABLE_MODEL_LIBS Qt${QT_VERSION_MAJOR}::Qml ${QI18N_LIBRARIES})
   set(source_files ${source_files} metarecord-qt/tablemodel.cpp)
   set(header_files ${header_files} metarecord-qt/tablemodel.h)
