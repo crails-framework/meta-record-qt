@@ -64,4 +64,4 @@ configure_file(meta-record-qt.pc.in meta-record-qt${QT_VERSION_MAJOR}.pc @ONLY)
 
 install(FILES ${header_files} DESTINATION include/metarecord-qt)
 install(TARGETS MetaRecordQt${QT_VERSION_MAJOR} LIBRARY DESTINATION lib)
-install(FILES ${CMAKE_BINARY_DIR}/meta-record-qt${QT_VERSION_MAJOR}.pc DESTINATION lib/pkgconfig)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/meta-record-qt${QT_VERSION_MAJOR}.pc DESTINATION lib/pkgconfig)
