@@ -99,6 +99,10 @@ signals:
   void currentIndexChanged();
   void stateChanged();
 
+public slots:
+  void refreshModel(const MetaRecordable*);
+  void refreshModelCell(const MetaRecordable*, const char* propertyName);
+
 protected:
   int  getColumnIndex(const QByteArray&) const;
   void appendColumn(QJSValue);

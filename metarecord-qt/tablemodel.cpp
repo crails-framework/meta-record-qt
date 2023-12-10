@@ -276,6 +276,32 @@ int MetaRecordTableModel::getColumnIndex(const QByteArray& propertyName) const
   return -1;
 }
 
+void MetaRecordTableModel::refreshModel(const MetaRecordable* model)
+{
+  auto row = list.indexOf(const_cast<MetaRecordable*>(model));
+
+  if (row >= 0)
+  {
+    QModelIndex topLeft = createIndex(row, 0, const_cast<MetaRecordable*>(model));
+    QModelIndex bottomRight = createIndex(row, columnCount(), const_cast<MetaRecordable*>(model));
+
+    emit dataChanged(topLeft, bottomRight);
+  }
+}
+
+void MetaRecordTableModel::refreshModelCell(const MetaRecordable* model, const char* propertyName)
+{
+  auto row = list.indexOf(const_cast<MetaRecordable*>(model));
+  auto column = getColumnIndex(propertyName);
+
+  if (row >= 0 && column >= 0)
+  {
+    QModelIndex index = createIndex(row, column, const_cast<MetaRecordable*>(model));
+
+    emit dataChanged(index, index);
+  }
+}
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 typedef int RowSizeType;
 #else
