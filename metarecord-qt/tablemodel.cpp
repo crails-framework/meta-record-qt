@@ -174,6 +174,10 @@ QVariant MetaRecordTableModel::data(const QModelIndex& index, int role) const
     return tableData(index);
   case HeaderRole:
     return columnData(index.column());
+  case PropertyRole:
+    return columnProperty(index.column());
+  case ModelRole:
+    return QVariant::fromValue(list.size() > index.row() ? reinterpret_cast<QObject*>(list.at(index.row())) : nullptr);
   }
   return QVariant();
 }
@@ -181,8 +185,8 @@ QVariant MetaRecordTableModel::data(const QModelIndex& index, int role) const
 QVariant MetaRecordTableModel::tableData(const QModelIndex& index) const
 {
   MetaRecordable* model        = list.size() > index.row() ? list.at(index.row()) : nullptr;
-  const Column&     column       = columns[index.column()];
-  QVariant          value;
+  const Column&   column       = columns[index.column()];
+  QVariant        value;
 
   if (model)
   {
@@ -218,11 +222,20 @@ QVariant MetaRecordTableModel::columnData(int column) const
   return QVariant(column);
 }
 
+QByteArray MetaRecordTableModel::columnProperty(int column) const
+{
+  if (columns.count() > column)
+    return columns[column].property;
+  return QByteArray();
+}
+
 QHash<int, QByteArray> MetaRecordTableModel::roleNames() const
 {
   return {
-    {Qt::DisplayRole, "display"},
-    {HeaderRole,      "header"}
+    {Qt::DisplayRole, "displayValue"},
+    {HeaderRole,      "header"},
+    {ModelRole,       "model"},
+    {PropertyRole,    "propertyName"}
   };
 }
 

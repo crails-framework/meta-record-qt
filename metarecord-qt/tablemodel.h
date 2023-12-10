@@ -21,6 +21,8 @@ class METARECORDQT_EXPORT MetaRecordTableModel : public QAbstractTableModel
   enum TableRoles
   {
     HeaderRole = Qt::UserRole + 1,
+    ModelRole,
+    PropertyRole
   };
 
 public:
@@ -75,6 +77,7 @@ public:
   QVariant tableData(const QModelIndex& index) const;
   Q_INVOKABLE QVariant tableData(unsigned int row, unsigned int column) const { return tableData(createIndex(row, column)); }
   QVariant columnData(int column) const;
+  QByteArray columnProperty(int column) const;
   QHash<int, QByteArray> roleNames() const override;
   QQmlListProperty<MetaRecordable> modelList();
   const QVector<MetaRecordable*>& models() const { return list; }
@@ -83,7 +86,7 @@ public:
   State state() const { return m_state; }
   void setState(State value) { m_state = value; emit stateChanged(); }
 
-  Q_INVOKABLE QByteArray        propertyAt(unsigned int column) const;
+  Q_INVOKABLE QByteArray      propertyAt(unsigned int column) const;
   Q_INVOKABLE MetaRecordable* modelAt(unsigned int row) const;
   Q_INVOKABLE MetaRecordable* currentModel() const { return modelAt(m_currentIndex); }
   Q_INVOKABLE QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
