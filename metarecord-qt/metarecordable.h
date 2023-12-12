@@ -6,10 +6,12 @@
 # include <QVariantMap>
 # include <QJsonObject>
 # include "MetaRecordQt_global.h"
+# include "relationship.h"
 
 class METARECORDQT_EXPORT MetaRecordable : public QObject
 {
   Q_OBJECT
+  typedef QVector<std::shared_ptr<IMetaRecordRelationship>> Relationships;
 
   Q_PROPERTY(QByteArray type READ getType CONSTANT)
 public:
@@ -61,7 +63,14 @@ protected:
   virtual bool usePolymorphism() const { return false; }
   virtual const QStringList& virtualPropertyList() const;
 
+  template<typename MODEL>
+  void registerRelationship(const QString& name, QList<MODEL*>& list)
+  {
+    relationships << std::make_shared<MetaRecordRelationship<MODEL>>(this, name, list);
+  }
+
   QByteArray uid;
+  Relationships relationships;
 };
 
 #define METARECORD_VIRTUAL_PROPERTIES(parent, list) \

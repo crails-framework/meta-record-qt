@@ -32,6 +32,7 @@ set(header_files
   metarecord-qt/metarecordnotifiable.h
   metarecord-qt/hasOne.h
   metarecord-qt/vector.h
+  metarecord-qt/relationship.h
 )
 
 if (WITH_TABLE_MODEL)

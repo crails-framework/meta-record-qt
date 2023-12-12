@@ -54,6 +54,8 @@ void MetaRecordable::fromJson(const QByteArray& text)
 void MetaRecordable::fromVariantMap(const QVariantMap& map)
 {
   importQProperties(*this, map, virtualPropertyList());
+  for (const auto& relationship : qAsConst(relationships))
+    relationship->fromVariant(map[relationship->name].toList());
 }
 
 QVariantMap MetaRecordable::toVariantMap(int) const
@@ -63,6 +65,8 @@ QVariantMap MetaRecordable::toVariantMap(int) const
   injectQProperties(*this, map, virtualPropertyList());
   if (usePolymorphism())
     map.insert("_type", getType());
+  for (const auto& relationship : qAsConst(relationships))
+    map.insert(relationship->name, relationship->toVariant());
   return map;
 }
 
