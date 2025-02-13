@@ -44,7 +44,12 @@ protected:
     explicit Column(const QByteArray& property);
     explicit Column(QJSValue);
     Column() {}
-    Column(const Column& col) : property(col.property), label(col.label), handler(col.handler) {}
+    Column(const Column& col) :
+      property(col.property),
+      label(col.label),
+      enforcedWidth(col.enforcedWidth),
+      handler(col.handler)
+    {}
 
     bool operator==(const QByteArray& value) const { return property == value; }
   };
