@@ -42,7 +42,12 @@ public:
   }
 
   template<typename FINAL_TYPE>
-  static const char* collectionName() { return FINAL_TYPE().metaObject()->className(); }
+  static const char* collectionName()
+  {
+    const QMetaType metaType = QMetaType::fromType<FINAL_TYPE>();
+    const auto* metaObject = metaType.metaObject() ? metaType.metaObject() : FINAL_TYPE().metaObject();
+    return metaObject ? metaObject->className() : "";
+  }
 
   template<typename FINAL_TYPE>
   static FINAL_TYPE* factory(const QJsonObject& json, QObject* parent = nullptr) { return factory<FINAL_TYPE>(json.toVariantMap(), parent); }
