@@ -4,9 +4,52 @@
 #include <qi18n.h>
 #include <cmath>
 
+static void disconnectWatcher(QMap<MetaRecordable*, QMetaObject::Connection>& watchers, MetaRecordable* model)
+{
+  auto it = watchers.find(model);
+  if (it != watchers.end())
+  {
+    QObject::disconnect(it.value());
+    watchers.erase(it);
+  }
+}
+
+static void disconnectAllWatchers(const QVector<MetaRecordable*>& list, QMap<MetaRecordable*, QMetaObject::Connection>& watchers)
+{
+  for (auto it = watchers.begin() ; it != watchers.end() ; ++it)
+  {
+    if (list.indexOf(it.key()) >= 0)
+      QObject::disconnect(it.value());
+  }
+  watchers.clear();
+}
+
+static void onModelDestroyed(MetaRecordable* model, QVector<MetaRecordable*>& list, MetaRecordTableModel& self)
+{
+  self.removeRow(list.indexOf(model));
+}
+
 MetaRecordTableModel::MetaRecordTableModel(QObject* parent) : QAbstractTableModel(parent)
 {
   connect(this, &QAbstractTableModel::dataChanged, this, &MetaRecordTableModel::listChanged);
+  connect(this, &MetaRecordTableModel::listChanged, this, &MetaRecordTableModel::updateDestroyWatchers);
+}
+
+void MetaRecordTableModel::updateDestroyWatchers()
+{
+  disconnectAllWatchers(list, destroyWatchers);
+  for (MetaRecordable* model : list)
+  {
+    destroyWatchers.insert(
+      model,
+      QObject::connect(
+        model,
+        &QObject::destroyed,
+        this,
+        [this, model]() { removeRow(model); }
+      )
+    );
+  }
 }
 
 void MetaRecordTableModel::initializeRowHeaderColumn(const MetaRecordable& sample)
@@ -99,6 +142,7 @@ void MetaRecordTableModel::appendRows(const QVector<MetaRecordable*>& entries, i
   }
   else
     list.append(entries);
+  updateDestroyWatchers();
   endInsertRows();
 }
 
@@ -121,12 +165,14 @@ void MetaRecordTableModel::removeRows(const QStringList& uids)
   }
 }
 
-void MetaRecordTableModel::removeRow(unsigned int index)
+void MetaRecordTableModel::removeRow(unsigned int uindex)
 {
-  if (index < static_cast<unsigned int>(list.size()))
+  int index = static_cast<int>(uindex);
+  if (index < list.size())
   {
-    beginRemoveRows(QModelIndex(), static_cast<int>(index), static_cast<int>(index + 1));
-    list.remove(static_cast<int>(index));
+    beginRemoveRows(QModelIndex(), index, index + 1);
+    disconnectWatcher(destroyWatchers, list.at(index));
+    list.remove(index);
     endRemoveRows();
   }
 }
@@ -152,6 +198,7 @@ int MetaRecordTableModel::indexOf(QByteArray uid)
 void MetaRecordTableModel::clear()
 {
   beginResetModel();
+  disconnectAllWatchers(list, destroyWatchers);
   list.clear();
   endResetModel();
 }

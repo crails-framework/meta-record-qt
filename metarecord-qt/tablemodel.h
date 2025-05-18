@@ -60,6 +60,8 @@ protected:
   int                      m_currentIndex = 0;
   State                    m_state = ReadState;
   QJSEngine*               javascriptEngine = nullptr;
+  QMap<MetaRecordable*, QMetaObject::Connection> destroyWatchers;
+  void updateDestroyWatchers();
 public:
   explicit MetaRecordTableModel(QObject* parent = nullptr);
 
