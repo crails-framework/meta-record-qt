@@ -47,8 +47,9 @@ protected:
     Column(const Column& col) :
       property(col.property),
       label(col.label),
+      handler(col.handler),
       enforcedWidth(col.enforcedWidth),
-      handler(col.handler)
+      decimals(col.decimals)
     {}
 
     bool operator==(const QByteArray& value) const { return property == value; }
@@ -62,6 +63,7 @@ protected:
   QJSEngine*               javascriptEngine = nullptr;
   QMap<MetaRecordable*, QMetaObject::Connection> destroyWatchers;
   void updateDestroyWatchers();
+  void watchRow(MetaRecordable* model);
 public:
   explicit MetaRecordTableModel(QObject* parent = nullptr);
 
@@ -89,7 +91,7 @@ public:
   QQmlListProperty<MetaRecordable> modelList();
   const QVector<MetaRecordable*>& models() const { return list; }
   int currentIndex() const { return m_currentIndex; }
-  void setCurrentIndex(int value) { m_currentIndex = value; emit currentIndexChanged(); }
+  void setCurrentIndex(int value) { if (value != m_currentIndex) { m_currentIndex = value; emit currentIndexChanged(); } }
   State state() const { return m_state; }
   void setState(State value) { m_state = value; emit stateChanged(); }
 
@@ -112,7 +114,8 @@ public slots:
 
 protected:
   int  getColumnIndex(const QByteArray&) const;
-  void appendColumn(QJSValue);
+  void appendColumn(QJSValue, QVector<Column>& target) const;
+  void replaceColumns(const QVector<Column>& newColumns);
 };
 
 #endif

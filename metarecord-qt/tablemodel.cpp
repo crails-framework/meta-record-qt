@@ -24,14 +24,8 @@ static void disconnectAllWatchers(const QVector<MetaRecordable*>& list, QMap<Met
   watchers.clear();
 }
 
-static void onModelDestroyed(MetaRecordable* model, QVector<MetaRecordable*>& list, MetaRecordTableModel& self)
-{
-  self.removeRow(list.indexOf(model));
-}
-
 MetaRecordTableModel::MetaRecordTableModel(QObject* parent) : QAbstractTableModel(parent)
 {
-  connect(this, &QAbstractTableModel::dataChanged, this, &MetaRecordTableModel::listChanged);
   connect(this, &MetaRecordTableModel::listChanged, this, &MetaRecordTableModel::updateDestroyWatchers);
 }
 
@@ -39,17 +33,17 @@ void MetaRecordTableModel::updateDestroyWatchers()
 {
   disconnectAllWatchers(list, destroyWatchers);
   for (MetaRecordable* model : list)
-  {
-    destroyWatchers.insert(
-      model,
-      QObject::connect(
-        model,
-        &QObject::destroyed,
-        this,
-        [this, model]() { removeRow(model); }
-      )
-    );
-  }
+    watchRow(model);
+}
+
+void MetaRecordTableModel::watchRow(MetaRecordable* model)
+{
+  if (!model || destroyWatchers.contains(model))
+    return;
+  destroyWatchers.insert(
+    model,
+    QObject::connect(model, &QObject::destroyed, this, [this, model]() { removeRow(model); })
+  );
 }
 
 void MetaRecordTableModel::initializeRowHeaderColumn(const MetaRecordable& sample)
@@ -92,57 +86,66 @@ MetaRecordTableModel::Column::Column(QJSValue object)
 void MetaRecordTableModel::initializeColumns(const MetaRecordable& sample, QStringList blacklist)
 {
   const auto* meta = sample.metaObject();
+  QVector<Column> newColumns;
 
   blacklist << rowHeaderColumn << "objectName";
-  removeColumns(0, columns.count());
-  columns.clear();
-  beginInsertColumns(QModelIndex(), 0, meta->propertyCount());
   for (int i = 0 ; i < meta->propertyCount() ; ++i)
   {
     QMetaProperty property = meta->property(i);
     QByteArray    propertyName(property.name());
 
     if (blacklist.indexOf(propertyName) < 0)
-      columns << Column(QByteArray(propertyName));
+      newColumns << Column(QByteArray(propertyName));
   }
-  endInsertColumns();
-  emit columnsChanged();
+  replaceColumns(newColumns);
 }
 
-void MetaRecordTableModel::appendColumn(QJSValue object)
+void MetaRecordTableModel::appendColumn(QJSValue object, QVector<Column>& target) const
 {
   if (object.isString())
-    columns << Column(object.toString().toUtf8());
+    target << Column(object.toString().toUtf8());
   else if (object.isObject())
-    columns << Column(object);
+    target << Column(object);
 }
 
 void MetaRecordTableModel::setColumns(QJSValue object)
 {
   unsigned int length = object.property("length").toUInt();
+  QVector<Column> newColumns;
 
-  removeColumns(0, columns.count());
-  columns.clear();
-  beginInsertColumns(QModelIndex(), 0, static_cast<int>(length));
   for (unsigned int i = 0 ; i < length ; ++i)
-    appendColumn(object.property(i));
-  endInsertColumns();
+    appendColumn(object.property(i), newColumns);
+  replaceColumns(newColumns);
+}
+
+void MetaRecordTableModel::replaceColumns(const QVector<Column>& newColumns)
+{
+  if (columns.count() > 0)
+  {
+    beginRemoveColumns(QModelIndex(), 0, columns.count() - 1);
+    columns.clear();
+    endRemoveColumns();
+  }
+  if (newColumns.count() > 0)
+  {
+    beginInsertColumns(QModelIndex(), 0, newColumns.count() - 1);
+    columns = newColumns;
+    endInsertColumns();
+  }
   emit columnsChanged();
 }
 
 void MetaRecordTableModel::appendRows(const QVector<MetaRecordable*>& entries, int index)
 {
+  if (entries.isEmpty())
+    return;
   if (index < 0)
     index = rowCount();
-  beginInsertRows(QModelIndex(), index, index + entries.length());
-  if (index >= 0)
-  {
-    for (auto it = entries.rbegin() ; it != entries.rend() ; ++it)
-      list.insert(index, *it);
-  }
-  else
-    list.append(entries);
-  updateDestroyWatchers();
+  beginInsertRows(QModelIndex(), index, index + entries.length() - 1);
+  for (auto it = entries.rbegin() ; it != entries.rend() ; ++it)
+    list.insert(index, *it);
+  for (auto* model : entries)
+    watchRow(model);
   endInsertRows();
 }
 
@@ -170,7 +173,7 @@ void MetaRecordTableModel::removeRow(unsigned int uindex)
   int index = static_cast<int>(uindex);
   if (index < list.size())
   {
-    beginRemoveRows(QModelIndex(), index, index + 1);
+    beginRemoveRows(QModelIndex(), index, index);
     disconnectWatcher(destroyWatchers, list.at(index));
     list.remove(index);
     endRemoveRows();
@@ -224,7 +227,7 @@ QVariant MetaRecordTableModel::data(const QModelIndex& index, int role) const
   case PropertyRole:
     return columnProperty(index.column());
   case ModelRole:
-    return QVariant::fromValue(list.size() > index.row() ? reinterpret_cast<QObject*>(list.at(index.row())) : nullptr);
+    return QVariant::fromValue(list.size() > index.row() ? static_cast<QObject*>(list.at(index.row())) : nullptr);
   }
   return QVariant();
 }
