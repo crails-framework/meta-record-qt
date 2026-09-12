@@ -73,7 +73,7 @@ QVariantMap MetaRecordable::toVariantMap(int) const
 
 bool MetaRecordable::copy(const MetaRecordable* source, int)
 {
-  if (source && metaObject()->className() == source->metaObject()->className())
+  if (source && metaObject() == source->metaObject())
   {
     fromVariantMap(source->toVariantMap());
     return true;
