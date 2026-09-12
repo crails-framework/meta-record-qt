@@ -8,10 +8,15 @@ template<typename VALUE_TYPE, typename SOURCE>
 QVector<VALUE_TYPE*> model_vector_cast(const SOURCE& source)
 {
   QVector<VALUE_TYPE*> result;
+  VALUE_TYPE* value;
 
   result.reserve(source.size());
   for (MetaRecordable* model : source)
-    result.push_back(reinterpret_cast<VALUE_TYPE*>(model));
+  {
+    value = dynamic_cast<VALUE_TYPE*>(model);
+    if (value)
+      result.push_back(value);
+  }
   return result;
 }
 
