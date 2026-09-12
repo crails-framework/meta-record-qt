@@ -44,9 +44,7 @@ public:
   template<typename FINAL_TYPE>
   static const char* collectionName()
   {
-    const QMetaType metaType = QMetaType::fromType<FINAL_TYPE>();
-    const auto* metaObject = metaType.metaObject() ? metaType.metaObject() : FINAL_TYPE().metaObject();
-    return metaObject ? metaObject->className() : "";
+    return FINAL_TYPE::staticMetaObject.className();
   }
 
   template<typename FINAL_TYPE>
