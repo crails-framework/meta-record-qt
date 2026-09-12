@@ -9,16 +9,15 @@ template<typename TYPE>
 void setHasOneRelationship(QObject* self, QByteArray& uid, TYPE*& value, const TYPE* newValue)
 {
   if (value)
+  {
     delete value;
+    value = nullptr;
+    uid   = QByteArray();
+  }
   if (newValue)
   {
     value = MetaRecordable::factory<TYPE>(newValue->toVariantMap(), self);
     uid   = value->getUid();
-  }
-  else
-  {
-    value = nullptr;
-    uid   = QByteArray();
   }
 }
 
